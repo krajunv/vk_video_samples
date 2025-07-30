@@ -294,13 +294,7 @@ VkResult VkVideoEncoderH264::ProcessDpb(VkSharedBaseObj<VkVideoEncodeFrameInfo>&
     pFrameInfo->stdReferenceListsInfo.pRefList1ModOperations = pFrameInfo->refList1ModOperations;
     pFrameInfo->stdReferenceListsInfo.pRefPicMarkingOperations = pFrameInfo->refPicMarkingEntry;
 
-    if ((m_h264.m_ppsInfo.num_ref_idx_l0_default_active_minus1 > 0) &&
-            (picType == VkVideoGopStructure::FRAME_TYPE_B)) {
-        // do not use multiple references for l0
-        pFrameInfo->stdSliceHeader.flags.num_ref_idx_active_override_flag = true;
-        pFrameInfo->stdReferenceListsInfo.num_ref_idx_l0_active_minus1 = 0;
-    }
-
+    pFrameInfo->stdSliceHeader.flags.num_ref_idx_active_override_flag = false;
     NvVideoEncodeH264DpbSlotInfoLists<STD_VIDEO_H264_MAX_NUM_LIST_REF> refLists;
     m_dpb264->GetRefPicList(&pictureInfo, &refLists, &m_h264.m_spsInfo, &m_h264.m_ppsInfo, &pFrameInfo->stdSliceHeader, &pFrameInfo->stdReferenceListsInfo);
     assert(refLists.refPicListCount[0] <= 8);
